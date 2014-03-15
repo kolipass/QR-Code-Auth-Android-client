@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">"QR-Code Auth "</string>
+    <string name="qr_result_not_init">QR уще не был распознан</string>
+    <string name="qr_result_init">QR:  %1$s %2$s</string>
+
+</resources>
