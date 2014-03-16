@@ -7,15 +7,17 @@ def computeVersionName() {
 
     def build = 0
     if (props.contains("VERSION_BUILD")) {
-        build = Integer.parseInt(props[VERSION_BUILD]) + 1
+        build = Integer.parseInt(props.getProperty("VERSION_BUILD")) + 1
     }
     props.setProperty("VERSION_BUILD", String.valueOf(build))
     OutputStream out = new FileOutputStream(propFile);
     props.store(out, "");
     out.close();
 
-    def versionName = project.VERSION_MAJOR + "." + project.VERSION_MINOR + "." + project.VERSION_PATCH + "." + build
-    versionName = String.valueOf(project.VERSION_SNAPSHOT).length() > 0 ? versionName + "-" + project.VERSION_SNAPSHOT : versionName;
+    def versionName = project.VERSION_MAJOR + "." + project.VERSION_MINOR + "." + project.VERSION_PATCH
+    if (Integer.valueOf(project.VERSION_SNAPSHOT) > 0) {
+        versionName += "." + String.valueOf(build) + "-" + "SNAPSHOT";
+    }
 
     return versionName
 }
@@ -48,9 +50,12 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.android.support:support-v4:19.+'
+    compile 'com.android.support:appcompat-v7:19.+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile 'com.google.zxing:core:2.2'
     compile 'com.embarkmobile:zxing-android-minimal:1.2.0@aar'
+
+    compile "com.google.code.gson:gson:2.2.2"
 }

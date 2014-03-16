@@ -2,22 +2,35 @@ package mobi.tarantio.qr_codeauth.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import mobi.tarantio.qr_codeauth.app.loader.AbstractServerResponse;
+import mobi.tarantio.qr_codeauth.app.loader.ServerLoaderCallbacks;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements ServerLoaderCallbacks.Listener {
+    private int LOADER_ID = 1;
+    private ServerLoaderCallbacks loaderCallbacks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        IntentIntegrator.initiateScan(this);
+
+        Loader<Object> seLoader = getSupportLoaderManager().getLoader(LOADER_ID);
+        if (seLoader == null) {
+            IntentIntegrator.initiateScan(this);
+        }
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -25,10 +38,21 @@ public class MainActivity extends ActionBarActivity {
         if (scanResult != null) {
             String text = getString(R.string.qr_result_init);
             TextView textView = (TextView) findViewById(R.id.qr_result);
-            textView.setText(String.format(text, scanResult.getContents(),scanResult.getFormatName()));
+            if (IntentIntegrator.QR_CODE_TYPES.equals(scanResult.getFormatName())) {
+                textView.setText(String.format(text, scanResult.getContents()));
+                if (loaderCallbacks == null) {
+                    loaderCallbacks = new ServerLoaderCallbacks(this, this);
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString(ServerLoaderCallbacks.key, scanResult.getContents());
+                getSupportLoaderManager().restartLoader(LOADER_ID, bundle, loaderCallbacks);
+
+            } else {
+                Toast.makeText(this, R.string.bad_bar_code, Toast.LENGTH_SHORT).show();
+                IntentIntegrator.initiateScan(this);
+            }
 
         }
-        // else continue with any other code you need in the method
     }
 
 
@@ -52,4 +76,15 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void setData(Loader<AbstractServerResponse> loader, AbstractServerResponse data) {
+
+        findViewById(R.id.progressBar).setVisibility(View.GONE);
+        ((TextView) findViewById(R.id.qr_result)).setText(data.toString());
+    }
+
+    @Override
+    public void setRefreshing() {
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+    }
 }
