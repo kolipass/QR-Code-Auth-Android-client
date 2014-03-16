@@ -26,10 +26,12 @@ public class MainActivity extends ActionBarActivity implements ServerLoaderCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Loader<Object> seLoader = getSupportLoaderManager().getLoader(LOADER_ID);
-        if (seLoader == null) {
-            IntentIntegrator.initiateScan(this);
-        }
+//        Loader<Object> seLoader = getSupportLoaderManager().getLoader(LOADER_ID);
+//        if (seLoader == null) {
+//            IntentIntegrator.initiateScan(this);
+//        }
+
+        initLoader("http://qrcodeauth.ifacesoft.ru/auth/?c=3424234&s=wqe");
 
     }
 
@@ -38,14 +40,13 @@ public class MainActivity extends ActionBarActivity implements ServerLoaderCallb
         if (scanResult != null) {
             String text = getString(R.string.qr_result_init);
             TextView textView = (TextView) findViewById(R.id.qr_result);
+
+            android.util.Log.d("----", scanResult.getContents());
+
             if (IntentIntegrator.QR_CODE_TYPES.equals(scanResult.getFormatName())) {
                 textView.setText(String.format(text, scanResult.getContents()));
-                if (loaderCallbacks == null) {
-                    loaderCallbacks = new ServerLoaderCallbacks(this, this);
-                }
-                Bundle bundle = new Bundle();
-                bundle.putString(ServerLoaderCallbacks.key, scanResult.getContents());
-                getSupportLoaderManager().restartLoader(LOADER_ID, bundle, loaderCallbacks);
+
+                initLoader(scanResult.getContents());
 
             } else {
                 Toast.makeText(this, R.string.bad_bar_code, Toast.LENGTH_SHORT).show();
@@ -53,6 +54,16 @@ public class MainActivity extends ActionBarActivity implements ServerLoaderCallb
             }
 
         }
+    }
+
+    //     http://qrcodeauth.ifacesoft.ru/auth/?c=3424234&s=wqe
+    private void initLoader(String s) {
+        if (loaderCallbacks == null) {
+            loaderCallbacks = new ServerLoaderCallbacks(this, this);
+        }
+        Bundle bundle = new Bundle();
+        bundle.putString(ServerLoaderCallbacks.key, s);
+        getSupportLoaderManager().restartLoader(LOADER_ID, bundle, loaderCallbacks);
     }
 
 

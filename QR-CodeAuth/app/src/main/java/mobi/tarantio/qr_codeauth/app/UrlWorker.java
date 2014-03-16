@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class UrlWorker {
     static String authStr = "kolipass:qweqwe";
-    static String authEncoded = String.valueOf(Base64.encode(authStr.getBytes(), Base64.DEFAULT));
+    static String authEncoded = String.valueOf(Base64.encode(authStr.getBytes(), Base64.URL_SAFE));
 
     protected Log log = new Log();
 

@@ -62,4 +62,5 @@ public abstract class GracefulLoader<N> extends AsyncTaskLoader<N> {
         // Attempt to cancel the current load task if possible.
         cancelLoad();
     }
+
 }
