@@ -1,4 +1,3 @@
-QR-Code-Auth-Android-clietn
+QR-Code-Auth-Android-client
 ===========================
-
-QR-Code Auth Android client
+New wave QR-Code Auth Android client.
