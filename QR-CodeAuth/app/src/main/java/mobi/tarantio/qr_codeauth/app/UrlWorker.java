@@ -46,11 +46,15 @@ import java.util.List;
  */
 public class UrlWorker {
     static String authStr = "kolipass:qweqwe";
-    static String authEncoded = String.valueOf(Base64.encode(authStr.getBytes(), Base64.URL_SAFE));
+    static String authEncoded = Base64.encodeToString(authStr.getBytes(), Base64.URL_SAFE);
 
     protected Log log = new Log();
 
     public static Header getHTTPAuthorizationHeader() {
+        if(!authEncoded.substring(authEncoded.length()-1).equals("=")){
+            authEncoded+="=";
+        }
+
         return new BasicHeader("Authorization", "Basic " + authEncoded);
     }
 
