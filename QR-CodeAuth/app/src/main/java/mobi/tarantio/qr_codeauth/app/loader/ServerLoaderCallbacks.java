@@ -20,12 +20,12 @@ public class ServerLoaderCallbacks implements LoaderManager.LoaderCallbacks<Abst
 
     @Override
     public Loader<AbstractServerResponse> onCreateLoader(int id, Bundle args) {
+        callbacksListener.setRefreshing();
         return new SeLoader(context,args.getString(key));
     }
 
     @Override
     public void onLoadFinished(Loader<AbstractServerResponse> loader, AbstractServerResponse data) {
-
         callbacksListener.setData(loader, data);
     }
 

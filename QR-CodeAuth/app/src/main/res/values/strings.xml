@@ -5,5 +5,6 @@
     <string name="qr_result_not_init">QR еще не был распознан</string>
     <string name="qr_result_init">QR:  %1$s</string>
     <string name="bad_bar_code">Данный код не подходит, попробуйте еще</string>
+    <string name="processing">Обработка</string>
 
 </resources>

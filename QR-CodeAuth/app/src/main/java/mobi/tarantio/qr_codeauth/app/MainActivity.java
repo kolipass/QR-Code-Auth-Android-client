@@ -96,6 +96,7 @@ public class MainActivity extends ActionBarActivity implements ServerLoaderCallb
 
     @Override
     public void setRefreshing() {
+        ((TextView) findViewById(R.id.qr_result)).setText(R.string.processing);
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 }

@@ -1,21 +1,33 @@
 apply plugin: 'android'
 
-def computeVersionName() {
+def incVersion() {
     def Properties props = new Properties()
     def propFile = new File(project.getRootDir(), "local.properties")
     props.load(new FileInputStream(propFile))
 
     def build = 0
-    if (props.contains("VERSION_BUILD")) {
+    if (props.containsKey("VERSION_BUILD")) {
         build = Integer.parseInt(props.getProperty("VERSION_BUILD")) + 1
     }
     props.setProperty("VERSION_BUILD", String.valueOf(build))
     OutputStream out = new FileOutputStream(propFile);
     props.store(out, "");
     out.close();
+}
+
+def getVersionName() {
 
     def versionName = project.VERSION_MAJOR + "." + project.VERSION_MINOR + "." + project.VERSION_PATCH
-    if (Integer.valueOf(project.VERSION_SNAPSHOT) > 0) {
+
+    if (Integer.valueOf(project.VERSION_SNAPSHOT) == 1) {
+        def Properties props = new Properties()
+        def propFile = new File(project.getRootDir(), "local.properties")
+        props.load(new FileInputStream(propFile))
+
+        def build = 0
+        if (props.getProperty("VERSION_BUILD") != null) {
+            build = Integer.parseInt(props.getProperty("VERSION_BUILD"))
+        }
         versionName += "." + String.valueOf(build) + "-" + "SNAPSHOT";
     }
 
@@ -29,14 +41,15 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
-        versionName computeVersionName()
+        versionName getVersionName()
         versionCode Integer.parseInt(project.VERSION_CODE)
+
     }
     buildTypes {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-
+            incVersion()
             applicationVariants.all { variant ->
                 def file = variant.outputFile
                 variant.outputFile = new File(file.parent, file.name.replace(".apk", "-" + defaultConfig.versionName + ".apk"))
